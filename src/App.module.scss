@@ -226,43 +226,84 @@
 --------------------------------------------------------------------------- */
 
 .page[data-theme="modern"] {
+  --accent: #2563eb;
+  --line-theme: #e5e7eb;
+  --ink-strong: #111827;
+  --ink-muted: #6b7280;
+  --weekend-tint: #f8fafc;
+
   border: none;
-  padding: 8mm;
+  padding: 14mm 12mm;
+  font-family: "Inter", var(--sans);
 
   .title {
     justify-content: flex-start;
-    text-transform: none;
-    font-weight: 600;
-    font-size: 34px;
-    line-height: 1.1;
-    letter-spacing: -0.5px;
-    color: var(--accent);
+    align-items: baseline;
+    font-family: "Inter", var(--sans);
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+    position: relative;
+    padding-bottom: 14px;
+    margin-bottom: 6mm;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      bottom: 0;
+      width: 48px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
   }
 
   .calendar {
-    border-top: 1px solid var(--line-theme);
-    border-left: 1px solid var(--line-theme);
+    border: none;
+  }
+
+  .weekdays {
+    margin-bottom: 1mm;
   }
 
   .weekday {
-    border-right: 1px solid var(--line-theme);
+    border: none;
     border-bottom: 1px solid var(--line-theme);
-    color: var(--accent);
+    padding: 8px 6px;
+    font-size: 10px;
     font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
   }
 
   .cell {
+    border: none;
     border-right: 1px solid var(--line-theme);
     border-bottom: 1px solid var(--line-theme);
+    padding: 6px 8px;
+    align-items: flex-start;
+  }
+
+  .grid > .cell:nth-child(7n) {
+    border-right: none;
   }
 
   .dayNum {
-    color: var(--accent);
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-strong);
   }
 
   .weekend {
-    background: var(--accent-tint);
+    background: var(--weekend-tint);
+  }
+
+  .empty {
+    background: transparent;
   }
 }
 
