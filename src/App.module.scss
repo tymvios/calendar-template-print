@@ -308,7 +308,9 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    // !important overrides the inline preview-scale transform (see App.tsx),
+    // which may not have been reset yet when the browser prints.
+    transform: translate(-50%, -50%) !important;
     box-shadow: none;
   }
 }

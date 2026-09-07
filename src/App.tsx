@@ -92,11 +92,11 @@ function App() {
   const calendar = useMemo(() => buildCalendar(year, month), [year, month]);
   const monthValue = formatMonth(year, month);
 
-  // Scale the preview down to fit narrow (mobile/tablet) screens, without
-  // affecting the printed output which always renders at natural size.
+  // Scale the preview down to fit narrow (mobile/tablet) screens. The print
+  // stylesheet forcibly resets this (see App.module.scss), so it never
+  // affects the printed output even if this hasn't re-rendered yet.
   const stageRef = useRef<HTMLDivElement>(null);
   const [stageWidth, setStageWidth] = useState(0);
-  const [isPrinting, setIsPrinting] = useState(false);
 
   useEffect(() => {
     const el = stageRef.current;
@@ -104,17 +104,6 @@ function App() {
     const observer = new ResizeObserver((entries) => setStageWidth(entries[0].contentRect.width));
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const onBeforePrint = () => setIsPrinting(true);
-    const onAfterPrint = () => setIsPrinting(false);
-    window.addEventListener('beforeprint', onBeforePrint);
-    window.addEventListener('afterprint', onAfterPrint);
-    return () => {
-      window.removeEventListener('beforeprint', onBeforePrint);
-      window.removeEventListener('afterprint', onAfterPrint);
-    };
   }, []);
 
   const naturalWidthPx = PAPER_SIZE_MM[size].width * MM_TO_PX;
@@ -243,13 +232,13 @@ function App() {
       <div className={styles.pageStage} ref={stageRef}>
         <div
           className={styles.pageViewport}
-          style={isPrinting ? undefined : { width: naturalWidthPx * scale, height: naturalHeightPx * scale }}
+          style={{ width: naturalWidthPx * scale, height: naturalHeightPx * scale }}
         >
           <div
             className={styles.page}
             data-size={size}
             data-theme={style}
-            style={isPrinting ? undefined : { transform: `scale(${scale})` }}
+            style={{ transform: `scale(${scale})` }}
           >
             <h1 className={styles.title}>
               {style === 'simple' ? calendar.shortTitle : calendar.longTitle}
