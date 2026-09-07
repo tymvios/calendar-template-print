@@ -37,6 +37,38 @@
   }
 }
 
+.monthField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.monthControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.monthButton {
+  padding: 6px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--weekend-bg);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
 .printButton {
   padding: 8px 18px;
   border: none;
@@ -163,6 +195,28 @@
 
 .empty {
   background: var(--empty-bg);
+}
+
+@media print {
+  .app {
+    min-height: 0;
+    display: block;
+    padding: 0;
+    gap: 0;
+    background: #fff;
+  }
+
+  .toolbar {
+    display: none;
+  }
+
+  .page {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
