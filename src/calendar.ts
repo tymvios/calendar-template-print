@@ -32,9 +32,9 @@ export const PAPER_LABELS: Record<PaperSize, string> = {
   A3: 'A3 landscape',
 };
 
-export type CalendarStyle = 'simple' | 'modern' | 'roundy' | 'notebook';
+export type CalendarStyle = 'simple' | 'modern' | 'roundy' | 'notebook' | 'ledger';
 
-export const CALENDAR_STYLES: CalendarStyle[] = ['simple', 'modern', 'roundy', 'notebook'];
+export const CALENDAR_STYLES: CalendarStyle[] = ['simple', 'modern', 'roundy', 'notebook', 'ledger'];
 
 /** Human-readable label for each calendar style shown in the selector. */
 export const STYLE_LABELS: Record<CalendarStyle, string> = {
@@ -42,6 +42,7 @@ export const STYLE_LABELS: Record<CalendarStyle, string> = {
   modern: 'Modern',
   roundy: 'Roundy',
   notebook: 'Notebook',
+  ledger: 'Ledger',
 };
 
 export interface CalendarModel {
