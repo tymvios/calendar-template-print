@@ -12,6 +12,16 @@ export const PAGE_DIMENSIONS: Record<PaperSize, string> = {
   A3: '420mm 297mm',
 };
 
+/** Landscape sheet dimensions in millimetres, matching the `.page` CSS sizes. */
+export const PAPER_SIZE_MM: Record<PaperSize, { width: number; height: number }> = {
+  A6: { width: 148, height: 105 },
+  A6SQ: { width: 148, height: 148 },
+  A5: { width: 210, height: 148 },
+  A5SQ: { width: 210, height: 210 },
+  A4: { width: 297, height: 210 },
+  A3: { width: 420, height: 297 },
+};
+
 /** Human-readable label for each paper size shown in the selector. */
 export const PAPER_LABELS: Record<PaperSize, string> = {
   A6: 'A6 landscape',

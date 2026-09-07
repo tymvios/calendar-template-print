@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './App.module.scss';
 import {
   buildCalendar,
@@ -6,6 +6,7 @@ import {
   type CalendarStyle,
   PAGE_DIMENSIONS,
   PAPER_LABELS,
+  PAPER_SIZE_MM,
   PAPER_SIZES,
   parseMonth,
   parseSize,
@@ -13,6 +14,9 @@ import {
   type PaperSize,
   STYLE_LABELS,
 } from './calendar';
+
+/** CSS treats 1mm as exactly 96/25.4 reference pixels. */
+const MM_TO_PX = 96 / 25.4;
 
 interface Params {
   year: number;
@@ -87,6 +91,35 @@ function App() {
 
   const calendar = useMemo(() => buildCalendar(year, month), [year, month]);
   const monthValue = formatMonth(year, month);
+
+  // Scale the preview down to fit narrow (mobile/tablet) screens, without
+  // affecting the printed output which always renders at natural size.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageWidth, setStageWidth] = useState(0);
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => setStageWidth(entries[0].contentRect.width));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onBeforePrint = () => setIsPrinting(true);
+    const onAfterPrint = () => setIsPrinting(false);
+    window.addEventListener('beforeprint', onBeforePrint);
+    window.addEventListener('afterprint', onAfterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', onBeforePrint);
+      window.removeEventListener('afterprint', onAfterPrint);
+    };
+  }, []);
+
+  const naturalWidthPx = PAPER_SIZE_MM[size].width * MM_TO_PX;
+  const naturalHeightPx = PAPER_SIZE_MM[size].height * MM_TO_PX;
+  const scale = stageWidth === 0 ? 1 : Math.min(1, stageWidth / naturalWidthPx);
 
   const updateUrl = (nextMonth: string, nextSize: PaperSize, nextStyle: CalendarStyle) => {
     const query = new URLSearchParams();
@@ -207,41 +240,53 @@ function App() {
         </button>
       </div>
 
-      <div className={styles.page} data-size={size} data-theme={style}>
-        <h1 className={styles.title}>
-          {style === 'simple' ? calendar.shortTitle : calendar.longTitle}
-        </h1>
-        <div className={styles.calendar}>
-          <div className={styles.weekdays}>
-            {calendar.weekdays.map((weekday, index) => (
-              <div
-                key={weekday}
-                className={index >= 5 ? `${styles.weekday} ${styles.weekend}` : styles.weekday}
-              >
-                {weekday}
-              </div>
-            ))}
-          </div>
+      <div className={styles.pageStage} ref={stageRef}>
+        <div
+          className={styles.pageViewport}
+          style={isPrinting ? undefined : { width: naturalWidthPx * scale, height: naturalHeightPx * scale }}
+        >
           <div
-            className={styles.grid}
-            style={{ gridTemplateRows: `repeat(${calendar.weeks.length}, 1fr)` }}
+            className={styles.page}
+            data-size={size}
+            data-theme={style}
+            style={isPrinting ? undefined : { transform: `scale(${scale})` }}
           >
-            {calendar.weeks.flatMap((week, rowIndex) =>
-              week.map((day, columnIndex) => (
-                <div
-                  key={`${rowIndex}-${columnIndex}`}
-                  className={[
-                    styles.cell,
-                    columnIndex >= 5 ? styles.weekend : '',
-                    day === null ? styles.empty : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
-                  {day !== null && <span className={styles.dayNum}>{day}</span>}
-                </div>
-              )),
-            )}
+            <h1 className={styles.title}>
+              {style === 'simple' ? calendar.shortTitle : calendar.longTitle}
+            </h1>
+            <div className={styles.calendar}>
+              <div className={styles.weekdays}>
+                {calendar.weekdays.map((weekday, index) => (
+                  <div
+                    key={weekday}
+                    className={index >= 5 ? `${styles.weekday} ${styles.weekend}` : styles.weekday}
+                  >
+                    {weekday}
+                  </div>
+                ))}
+              </div>
+              <div
+                className={styles.grid}
+                style={{ gridTemplateRows: `repeat(${calendar.weeks.length}, 1fr)` }}
+              >
+                {calendar.weeks.flatMap((week, rowIndex) =>
+                  week.map((day, columnIndex) => (
+                    <div
+                      key={`${rowIndex}-${columnIndex}`}
+                      className={[
+                        styles.cell,
+                        columnIndex >= 5 ? styles.weekend : '',
+                        day === null ? styles.empty : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {day !== null && <span className={styles.dayNum}>{day}</span>}
+                    </div>
+                  )),
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
