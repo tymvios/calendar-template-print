@@ -1,51 +1,54 @@
-export type PaperSize = "A6" | "A6SQ" | "A5" | "A5SQ" | "A4" | "A3";
+export type PaperSize = 'A6' | 'A6SQ' | 'A5' | 'A5SQ' | 'A4' | 'A3';
 
-export const PAPER_SIZES: PaperSize[] = ["A6", "A6SQ", "A5", "A5SQ", "A4", "A3"];
+export const PAPER_SIZES: PaperSize[] = ['A6', 'A6SQ', 'A5', 'A5SQ', 'A4', 'A3'];
 
 /** Landscape sheet dimensions used for the CSS `@page { size }` rule. */
 export const PAGE_DIMENSIONS: Record<PaperSize, string> = {
-  A6: "148mm 105mm",
-  A6SQ: "148mm 148mm",
-  A5: "210mm 148mm",
-  A5SQ: "210mm 210mm",
-  A4: "297mm 210mm",
-  A3: "420mm 297mm",
+  A6: '148mm 105mm',
+  A6SQ: '148mm 148mm',
+  A5: '210mm 148mm',
+  A5SQ: '210mm 210mm',
+  A4: '297mm 210mm',
+  A3: '420mm 297mm',
 };
 
 /** Human-readable label for each paper size shown in the selector. */
 export const PAPER_LABELS: Record<PaperSize, string> = {
-  A6: "A6 landscape",
-  A6SQ: "A6 square",
-  A5: "A5 landscape",
-  A5SQ: "A5 square",
-  A4: "A4 landscape",
-  A3: "A3 landscape",
+  A6: 'A6 landscape',
+  A6SQ: 'A6 square',
+  A5: 'A5 landscape',
+  A5SQ: 'A5 square',
+  A4: 'A4 landscape',
+  A3: 'A3 landscape',
 };
 
-export type CalendarStyle = "simple" | "modern" | "roundy";
+export type CalendarStyle = 'simple' | 'modern' | 'roundy' | 'notebook';
 
-export const CALENDAR_STYLES: CalendarStyle[] = ["simple", "modern", "roundy"];
+export const CALENDAR_STYLES: CalendarStyle[] = ['simple', 'modern', 'roundy', 'notebook'];
 
 /** Human-readable label for each calendar style shown in the selector. */
 export const STYLE_LABELS: Record<CalendarStyle, string> = {
-  simple: "Simple",
-  modern: "Modern",
-  roundy: "Roundy",
+  simple: 'Simple',
+  modern: 'Modern',
+  roundy: 'Roundy',
+  notebook: 'Notebook',
 };
 
 export interface CalendarModel {
   year: number;
   /** 1-12 */
   month: number;
+  /** e.g. "Jul 2026" */
+  shortTitle: string;
   /** e.g. "July 2026" */
-  title: string;
+  longTitle: string;
   /** Weekday header labels, Monday first. */
   weekdays: string[];
   /** Rows of 7 cells; `null` means a padding cell outside the month. */
   weeks: (number | null)[][];
 }
 
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /** Parse a `YYYY-MM` string, falling back to the current month when invalid. */
 export function parseMonth(input: string | null): { year: number; month: number } {
@@ -63,14 +66,14 @@ export function parseMonth(input: string | null): { year: number; month: number 
 
 /** Parse a paper size, falling back to A5 when unknown. */
 export function parseSize(input: string | null): PaperSize {
-  const value = (input ?? "").toUpperCase();
-  return (PAPER_SIZES as string[]).includes(value) ? (value as PaperSize) : "A5";
+  const value = (input ?? '').toUpperCase();
+  return (PAPER_SIZES as string[]).includes(value) ? (value as PaperSize) : 'A5';
 }
 
 /** Parse a calendar style, falling back to "simple" when unknown. */
 export function parseStyle(input: string | null): CalendarStyle {
-  const value = (input ?? "").toLowerCase();
-  return (CALENDAR_STYLES as string[]).includes(value) ? (value as CalendarStyle) : "simple";
+  const value = (input ?? '').toLowerCase();
+  return (CALENDAR_STYLES as string[]).includes(value) ? (value as CalendarStyle) : 'simple';
 }
 
 /** Build a Monday-first month grid for the given year/month (month is 1-12). */
@@ -90,10 +93,14 @@ export function buildCalendar(year: number, month: number): CalendarModel {
     weeks.push(cells.slice(i, i + 7));
   }
 
-  const title = first.toLocaleDateString("en-US", {
-    month: "short",
-    year: "numeric",
+  const shortTitle = first.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+  });
+  const longTitle = first.toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
   });
 
-  return { year, month, title, weekdays: WEEKDAYS, weeks };
+  return { year, month, shortTitle, longTitle, weekdays: WEEKDAYS, weeks };
 }

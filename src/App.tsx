@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import styles from "./App.module.scss";
+import { useEffect, useMemo, useState } from 'react';
+import styles from './App.module.scss';
 import {
   buildCalendar,
   CALENDAR_STYLES,
@@ -12,7 +12,7 @@ import {
   parseStyle,
   type PaperSize,
   STYLE_LABELS,
-} from "./calendar";
+} from './calendar';
 
 interface Params {
   year: number;
@@ -22,22 +22,22 @@ interface Params {
 }
 
 const MONTH_OPTIONS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 function formatMonth(year: number, month: number): string {
-  return `${year}-${String(month).padStart(2, "0")}`;
+  return `${year}-${String(month).padStart(2, '0')}`;
 }
 
 function parseYearDraft(value: string): number | null {
@@ -52,9 +52,9 @@ function shiftMonth(year: number, month: number, offset: number): { year: number
 
 function readParams(): Params {
   const query = new URLSearchParams(window.location.search);
-  const { year, month } = parseMonth(query.get("month"));
-  const size = parseSize(query.get("size"));
-  const style = parseStyle(query.get("style"));
+  const { year, month } = parseMonth(query.get('month'));
+  const size = parseSize(query.get('size'));
+  const style = parseStyle(query.get('style'));
   return { year, month, size, style };
 }
 
@@ -66,8 +66,8 @@ function App() {
   // Reflect browser back/forward navigation.
   useEffect(() => {
     const onPopState = () => setParams(readParams());
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   useEffect(() => {
@@ -76,8 +76,8 @@ function App() {
 
   // Drive the printed sheet size/orientation via a dynamic @page rule.
   useEffect(() => {
-    const style = document.createElement("style");
-    const printPageSize = size === "A3" ? PAGE_DIMENSIONS.A3 : PAGE_DIMENSIONS.A4;
+    const style = document.createElement('style');
+    const printPageSize = size === 'A3' ? PAGE_DIMENSIONS.A3 : PAGE_DIMENSIONS.A4;
     style.textContent = `@page { size: ${printPageSize}; margin: 0; }`;
     document.head.appendChild(style);
     return () => {
@@ -90,10 +90,10 @@ function App() {
 
   const updateUrl = (nextMonth: string, nextSize: PaperSize, nextStyle: CalendarStyle) => {
     const query = new URLSearchParams();
-    query.set("month", nextMonth);
-    query.set("size", nextSize);
-    query.set("style", nextStyle);
-    window.history.pushState(null, "", `?${query.toString()}`);
+    query.set('month', nextMonth);
+    query.set('size', nextSize);
+    query.set('style', nextStyle);
+    window.history.pushState(null, '', `?${query.toString()}`);
     setParams(readParams());
   };
 
@@ -122,11 +122,11 @@ function App() {
             pattern="[0-9]*"
             maxLength={4}
             value={yearDraft}
-            onChange={(event) => setYearDraft(event.target.value.replace(/\D/g, "").slice(0, 4))}
+            onChange={(event) => setYearDraft(event.target.value.replace(/\D/g, '').slice(0, 4))}
             onBlur={commitYear}
             onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-              if (event.key === "Escape") {
+              if (event.key === 'Enter') event.currentTarget.blur();
+              if (event.key === 'Escape') {
                 setYearDraft(String(year));
                 event.currentTarget.blur();
               }
@@ -136,13 +136,24 @@ function App() {
         <div className={styles.monthField}>
           <span>Month</span>
           <div className={styles.monthControls}>
-            <button type="button" className={styles.monthButton} onClick={() => updateRelativeMonth(-1)} aria-label="Previous month">
+            <button
+              type="button"
+              className={styles.monthButton}
+              onClick={() => updateRelativeMonth(-1)}
+              aria-label="Previous month"
+            >
               Prev
             </button>
             <select
               value={month}
               aria-label="Month"
-              onChange={(event) => updateUrl(formatMonth(parseYearDraft(yearDraft) ?? year, Number(event.target.value)), size, style)}
+              onChange={(event) =>
+                updateUrl(
+                  formatMonth(parseYearDraft(yearDraft) ?? year, Number(event.target.value)),
+                  size,
+                  style,
+                )
+              }
             >
               {MONTH_OPTIONS.map((label, index) => (
                 <option key={label} value={index + 1}>
@@ -150,14 +161,22 @@ function App() {
                 </option>
               ))}
             </select>
-            <button type="button" className={styles.monthButton} onClick={() => updateRelativeMonth(1)} aria-label="Next month">
+            <button
+              type="button"
+              className={styles.monthButton}
+              onClick={() => updateRelativeMonth(1)}
+              aria-label="Next month"
+            >
               Next
             </button>
           </div>
         </div>
         <label>
           Paper
-          <select value={size} onChange={(event) => updateUrl(monthValue, event.target.value as PaperSize, style)}>
+          <select
+            value={size}
+            onChange={(event) => updateUrl(monthValue, event.target.value as PaperSize, style)}
+          >
             {PAPER_SIZES.map((option) => (
               <option key={option} value={option}>
                 {PAPER_LABELS[option]}
@@ -167,7 +186,10 @@ function App() {
         </label>
         <label>
           Style
-          <select value={style} onChange={(event) => updateUrl(monthValue, size, event.target.value as CalendarStyle)}>
+          <select
+            value={style}
+            onChange={(event) => updateUrl(monthValue, size, event.target.value as CalendarStyle)}
+          >
             {CALENDAR_STYLES.map((option) => (
               <option key={option} value={option}>
                 {STYLE_LABELS[option]}
@@ -181,23 +203,35 @@ function App() {
       </div>
 
       <div className={styles.page} data-size={size} data-theme={style}>
-        <h1 className={styles.title}>{calendar.title}</h1>
+        <h1 className={styles.title}>
+          {style === 'simple' ? calendar.shortTitle : calendar.longTitle}
+        </h1>
         <div className={styles.calendar}>
           <div className={styles.weekdays}>
             {calendar.weekdays.map((weekday, index) => (
-              <div key={weekday} className={index >= 5 ? `${styles.weekday} ${styles.weekend}` : styles.weekday}>
+              <div
+                key={weekday}
+                className={index >= 5 ? `${styles.weekday} ${styles.weekend}` : styles.weekday}
+              >
                 {weekday}
               </div>
             ))}
           </div>
-          <div className={styles.grid} style={{ gridTemplateRows: `repeat(${calendar.weeks.length}, 1fr)` }}>
+          <div
+            className={styles.grid}
+            style={{ gridTemplateRows: `repeat(${calendar.weeks.length}, 1fr)` }}
+          >
             {calendar.weeks.flatMap((week, rowIndex) =>
               week.map((day, columnIndex) => (
                 <div
                   key={`${rowIndex}-${columnIndex}`}
-                  className={[styles.cell, columnIndex >= 5 ? styles.weekend : "", day === null ? styles.empty : ""]
+                  className={[
+                    styles.cell,
+                    columnIndex >= 5 ? styles.weekend : '',
+                    day === null ? styles.empty : '',
+                  ]
                     .filter(Boolean)
-                    .join(" ")}
+                    .join(' ')}
                 >
                   {day !== null && <span className={styles.dayNum}>{day}</span>}
                 </div>
