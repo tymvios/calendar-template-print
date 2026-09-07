@@ -113,6 +113,11 @@ function App() {
 
   return (
     <div className={styles.app}>
+      <header className={styles.header}>
+        <h1>Calendar Printing Template</h1>
+        <p>Pick a month, paper size and style, then print or save as PDF.</p>
+      </header>
+
       <div className={styles.toolbar}>
         <label>
           Year
@@ -240,6 +245,10 @@ function App() {
           </div>
         </div>
       </div>
+
+      <footer className={styles.footer}>
+        Prepared by <a href="https://www.georgetymvios.com" target="_blank" rel="noopener noreferrer">George Tymvios</a> | Copyright {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }
