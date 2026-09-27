@@ -1,5 +1,10 @@
 # Printable Calendar Template
 
+[![Live Demo](https://img.shields.io/badge/demo-live-2e7d32?style=flat-square)](https://tymvios.github.io/calendar-template-print/)
+![React](https://img.shields.io/badge/React-19.2.7-61DAFB?logo=react&logoColor=white&style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-3178C6?logo=typescript&logoColor=white&style=flat-square)
+![Vite](https://img.shields.io/badge/Vite-8.1.5-646CFF?logo=vite&logoColor=white&style=flat-square)
+
 A small React + TypeScript + Vite app that renders a **print-ready monthly calendar**.
 The month, paper size, and visual style are all driven by the URL query string, so a
 given calendar is a shareable, bookmarkable link that prints cleanly.
